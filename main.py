@@ -44,10 +44,28 @@ class Entity:
                 if dist < closest_dist:
                     closest = entity
                     closest_dist = dist
+
         # move towards closest entity
         if closest is not None:
-            self.x += (closest.x - self.x) / closest_dist
-            self.y += (closest.y - self.y) / closest_dist
+            self.x += ((closest.x - self.x) / closest_dist) * 2.5
+            self.y += ((closest.y - self.y) / closest_dist) * 2.5
+
+    # run from closest entity on screen specified by letter
+    def run_from(self, letter, entities):
+        # find closest entity
+        closest = None
+        closest_dist = 1000000
+        for entity in entities:
+            if entity.letter == letter:
+                dist = ((entity.x - self.x) ** 2 + (entity.y - self.y) ** 2) ** 0.5
+                if dist < closest_dist:
+                    closest = entity
+                    closest_dist = dist
+                    
+        # move away from closest entity
+        if closest is not None:
+            self.x -= ((closest.x - self.x) / closest_dist) * 1.5
+            self.y -= ((closest.y - self.y) / closest_dist) * 1.5
 
     # when entity collides with another entity that is specified by class Name
     # like rock is in proximity of paper then rock becaomes paper
@@ -78,6 +96,7 @@ def update(dt):
     for entity in entities:
         entity.move()
         entity.move_towards("RPS"["RPS".index(entity.letter) - 1], entities)
+        entity.run_from("RPS"[("RPS".index(entity.letter) + 1) % 3], entities)
 
     # entities collide with each other
     for entity in entities:
